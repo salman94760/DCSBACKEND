@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use app\Models\Company;
+use App\Models\Company;
 
 #[Fillable(['name', 'email', 'password','role','company','signature'])]
 #[Hidden(['password', 'remember_token'])]

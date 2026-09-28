@@ -9,11 +9,11 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+        public function up(): void
     {
-        Schema::create('drivers', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('driver_employments', function (Blueprint $table) {
+            $table->unsignedBigInteger('company_id')
+                ->nullable();
         });
     }
 
@@ -22,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('drivers');
+        Schema::table('driver_employments', function (Blueprint $table) {
+            //
+        });
     }
 };

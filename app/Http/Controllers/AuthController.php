@@ -19,9 +19,8 @@ class AuthController extends Controller
     {
         $email      = $request->email ?? '';
         $password   = $request->password ?? '';
-        // dd();
 
-        $user = User::where('email', $email)->first();
+        $user = User::with('company')->where('email', $email)->first();
        
         if (!$user) {
             return response()->json([
@@ -66,6 +65,7 @@ class AuthController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->role,
+                'logo' => asset('storage/' . $user->company->image),
             ],
         ], 200);
     }

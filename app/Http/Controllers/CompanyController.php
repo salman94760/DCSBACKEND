@@ -82,7 +82,7 @@ $request->validate([
         $companies = Company::with('user.userInfo')->get();
         return response()->json([
             'success' => true,
-            'companies' => $companies,
+            'data' => $companies,
         ], 200);
     }
 
