@@ -29,6 +29,13 @@ class AuthController extends Controller
             ], 404);
         }
 
+        if (!$user->userInfo) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User information not found.',
+            ], 404);
+        }
+
         if ($user->userInfo->status === 0) {
             if($user->role === 'admin'){
                 $msg = "admin user not active contact Support .";
@@ -56,6 +63,7 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth-token')->plainTextToken;
 
+
         return response()->json([
             'success' => true,
             'message' => 'Login successful.',
@@ -65,7 +73,7 @@ class AuthController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->role,
-                'logo' => asset('storage/' . $user->company->image),
+                'logo' => $user->company?->image ? asset('storage/' . $user->company->image): null,
             ],
         ], 200);
     }
