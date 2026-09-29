@@ -23,6 +23,8 @@ class Driver extends Model
         'driverstatus',              
         'pclearinghousedate',        
         'terminationdate',           
+        'emecontactno',           
+        'emecontactperson',           
         'reasonleavingortermination',
         'legalrightsstatus',         
         'workauthorization',         

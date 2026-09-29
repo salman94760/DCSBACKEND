@@ -11,6 +11,9 @@ use App\Models\User;
 
 use App\Models\userInfo;
 use App\Models\Driver;
+use App\Models\DriverDocument;
+use App\Models\DriverDrugTest;
+use App\Models\DriverMiscellaneous;
 use App\Models\Employment;
 use App\Models\Company;
 use Illuminate\Support\Facades\Hash;
@@ -93,6 +96,8 @@ class DriverController extends Controller
             'driverstatus'              => $request->driverstatus,
             'pclearinghousedate'        => $request->pclearinghousedate,
             'terminationdate'           => $request->terminationdate,
+            'emecontactno'              => $request->emecontactno,
+            'emecontactperson'          => $request->emecontactperson,
             'reasonleavingortermination'=> $request->reasonleavingortermination,
             'legalrightsstatus'         => $request->legalrightsstatus,
             'workauthorization'         => $request->workauthorization,
@@ -318,4 +323,86 @@ class DriverController extends Controller
         ], 200); 
     }
 
+    public function addDriverDocument(Request $request){
+        $compname   = $request->cname ?? '';
+        $compId     = $request->company_id ?? '';
+        $driverId   = $request->driver_id ?? '';
+
+        if ($request->hasFile('files')) {
+            $docfiles = $request->file('files');
+            foreach ($docfiles as $k => $file) {
+                $filename = Str::slug($request->title[$k]) . '_' . $driverId . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $folder = str_replace(' ', '', $request->title[$k]);
+                if ($file->isValid()) {
+                    $path = $file->storeAs('driver/'.$driverId.'/document/'.$folder.'',$filename,'public');
+                }
+
+                DriverDocument::create([
+                    'driver_id'         => $driverId, 
+                    'title'             => $request->title[$k] ?? null,
+                    'subtitle'          => $request->subtitle[$k] ?? null,
+                    'expiration_date'   => $request->docdate[$k] ?? null,
+                    'file'              => $path
+                ]);
+            }
+        }
+
+        if ($request->hasFile('randomdrugfile')) {
+            $drugfiles = $request->file('randomdrugfile');
+            foreach ($drugfiles as $k => $file) {
+                $filename = Str::slug($request->drugtitle[$k]) . '_' . $driverId . '_' . time() . '.' . $file->getClientOriginalExtension();
+
+                $folder = str_replace(' ', '', $request->quarter[$k]);
+
+                if ($file->isValid()) {
+                    $path = $file->storeAs('driver/'.$driverId.'/drugtest/'.$folder.'',$filename,'public');
+                }
+                DriverDrugTest::create([
+                    'driver_id' => $driverId, 
+                    'quarter'   => $request->quarter[$k] ?? null,
+                    'title'     => $request->drugtitle[$k] ?? null,
+                    'date'      => $request->drugdate[$k] ?? null,
+                    'result'    => '',
+                    'file'      => $path
+                ]);
+            }
+        }
+
+        if ($request->hasFile('misfile')) {
+            $misfiles = $request->file('misfile');
+            foreach ($misfiles as $k => $file) {
+
+                $filename = Str::slug($request->miscellaneoustitle[$k]) . '_' . $driverId . '_' . time() . '.' . $file->getClientOriginalExtension();
+                if ($file->isValid()) {
+                    $path = $file->storeAs('driver/'.$driverId.'/miscellaneous/',$filename,'public');
+                }
+
+                DriverMiscellaneous::create([
+                    'driver_id' => $driverId, 
+                    'title'   => $request->miscellaneoustitle[$k] ?? null,
+                    'date'     => $request->miscellaneousdate[$k] ?? null,
+                    'file'      => $path
+                ]);
+            }
+        }
+
+
+        return response()->json([
+            'success'   => true,
+            'message'   => 'Document Updated successfully.',
+        ], 200);
+    }
+
+    public function DriverDocument($id){
+        $data = [];
+        $data['document']       = DriverDocument::where('driver_id',$id)->get();
+        $data['drugtest']       = DriverDrugTest::where('driver_id',$id)->get();
+        $data['miscellaneous']  = DriverMiscellaneous::where('driver_id',$id)->get();
+
+        return response()->json([
+            'success'   => true,
+            'message'   => 'Document fetched successfully.',
+            'data'      => $data
+        ], 200);
+    }
 }

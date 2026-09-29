@@ -53,4 +53,5 @@ Route::middleware('auth:sanctum')->group(function () {
 	Route::get('/company/driver-employment/{driverId}',[DriverController::class, 'DriverEmploymentHistory']);
     Route::post('/company/driver/history/add', [DriverController::class, 'addDriverHistory']);
     Route::post('/company/driver/document/add', [DriverController::class, 'addDriverDocument']);
+    Route::get('/company/driver-document/{id}', [DriverController::class, 'DriverDocument']);
 });
