@@ -10,6 +10,7 @@ class DriverDocument extends Model
     public $fillable = [
         'driver_id',
         'title',
+        'slug',
         'subtitle',
         'expiration_date',
         'file',
