@@ -84,7 +84,7 @@ class DriverController extends Controller
             'user_id'                   => $user->id,
             'company_id'                => $request->company_id,
             'fname'                     => $request->fname,
-            'mname'                     => $request->mname,
+            'mname'                     => $request->mname??'',
             'lname'                     => $request->lname,
             'activedate'                => $request->activedate,
             'dob'                       => $request->dob,
@@ -206,7 +206,7 @@ class DriverController extends Controller
 
         $driver->update([
             'fname'                     => $request->fname,
-            'mname'                     => $request->mname,
+            'mname'                     => $request->mname??'',
             'lname'                     => $request->lname,
             'activedate'                => $request->activedate,
             'dob'                       => $request->dob,
@@ -218,6 +218,8 @@ class DriverController extends Controller
             'driverstatus'              => $request->driverstatus,
             'pclearinghousedate'        => $request->pclearinghousedate,
             'terminationdate'           => $request->terminationdate,
+            'emecontactno'              => $request->emecontactno,
+            'emecontactperson'          => $request->emecontactperson,
             'reasonleavingortermination'=> $request->reasonleavingortermination,
             'legalrightsstatus'         => $request->legalrightsstatus,
             'workauthorization'         => $request->workauthorization,
