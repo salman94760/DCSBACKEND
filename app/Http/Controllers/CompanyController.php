@@ -19,12 +19,6 @@ class CompanyController extends Controller
     public function addCompany(Request $request){
 $request->validate([
     'email' => 'required|email|unique:companies,email',
-
-    'dot' => 'required|digits:7|unique:companies,dot',
-
-    'mc' => 'required|digits:7|unique:companies,mc',
-
-    'ein' => 'required|digits:9|unique:companies,ein',
 ]);
 
 
