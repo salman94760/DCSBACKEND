@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\DriverDocumentController;
+use App\Http\Controllers\DriverExperienceController;
 use App\Http\Controllers\SignatureController;
 use Illuminate\Support\Facades\Route;
 
@@ -65,5 +66,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/company/driver/history/add', 'addDriverHistory');
         Route::post('/company/driver/document/add', 'addDriverDocument');
         Route::get('/company/driver-document/{id}', 'DriverDocument');
+    });
+
+    // Drivers experience
+    Route::controller(DriverExperienceController::class)->group(function () {
+        Route::post('company/driver-experience/{id}', 'addDriverExperience');
+        Route::get('company/driver-experience/{id}', 'DriverExperience');
     });
 });
