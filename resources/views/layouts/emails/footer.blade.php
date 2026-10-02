@@ -39,7 +39,7 @@
         color:#ffffff;
         font-family: Tinos;
     ">
-        <img style="width:100px" src="url('storage/app/public/logo/logo1.png')"><br/>
+        <img style="width:100px" src="{{ env('APP_URL') . '/storage/app/public/logo/logo1.png' }}"><br/>
       
     </div>
 
