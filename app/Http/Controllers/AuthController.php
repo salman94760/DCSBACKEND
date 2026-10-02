@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 use App\Models\userInfo;
+use App\Models\Company;
 use Illuminate\Container\Attributes\Storage;
 
 use Illuminate\Support\Str;
@@ -62,7 +63,7 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('auth-token')->plainTextToken;
-
+        $company = Company::where('user_id',$user->id)->first();
 
         return response()->json([
             'success' => true,
@@ -74,6 +75,7 @@ class AuthController extends Controller
                 'email' => $user->email,
                 'role' => $user->role,
                 'logo' => $user->company?->image ? asset('storage/' . $user->company->image): null,
+                'company' => $company,
             ],
         ], 200);
     }

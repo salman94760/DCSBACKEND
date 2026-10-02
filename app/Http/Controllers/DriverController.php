@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
 
 class DriverController extends Controller
 {
@@ -159,10 +160,15 @@ class DriverController extends Controller
         ])->find($id);
 
         $companyId = $driver->company_id;
+        $driverEmail = $driver->email;
 
         $company = Company::where('user_id',$companyId)->first();
         if ($company) {
             $company->logo = $company->image? asset('storage/' . $company->image): null;
+        }
+
+        if($driverEmail){
+            Mail::to('salman94760@gmail.com')->send(DriverEsignRequest::class,[$drivers]);
         }
 
         if (!$driver) {
@@ -304,11 +310,12 @@ class DriverController extends Controller
             ->where('company_id', $cid)
             ->delete();
         }
+        $company = Company::where('user_id',$cid)->first();
 
         if(is_array($request->employers)){
             foreach ($request->employers as $key => $emp) {
                 $employment = Employment::create([
-                    'cname'             => $cname,
+                    'cname'             => $company->cname,
                     'company_id'        => $cid,
                     'driver_id'         => $driver_id,
                     'contactno'         => $emp['contactno'],
