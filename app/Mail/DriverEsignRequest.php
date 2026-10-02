@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Driver;
+use App\Models\Company;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
@@ -26,15 +27,13 @@ class DriverEsignRequest extends Mailable
     public function __construct(
         Driver $driver,
         string $esignUrl,
-        int $expiryHours,
-        string $companyName,
-        string $companyEmail
+        Company $company,
+       
     ) {
         $this->driver = $driver;
         $this->esignUrl = $esignUrl;
-        $this->expiryHours = $expiryHours;
-        $this->companyName = $companyName;
-        $this->companyEmail = $companyEmail;
+        $this->company = $company;
+       
     }
 
     /**
@@ -54,7 +53,7 @@ class DriverEsignRequest extends Mailable
     {
         return new Content(
             view: 'emails.driver-esign-request',
-            with: ['driver'=> $this->driver]
+            with: ['driver'=> $this->driver,'esignUrl'=>$this->esignUrl,'company'=>$this->company]
         );
     }
 

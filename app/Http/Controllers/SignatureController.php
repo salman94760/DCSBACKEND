@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use App\Models\Driver;
 
 class SignatureController extends Controller
 {
@@ -16,7 +17,8 @@ class SignatureController extends Controller
         ]);
 
         $signature = $request->signature;
-        $userId = $request->userId;
+        $driverId = $request->driverId;
+        $driver = Driver::findOrFail($driverId);
 
         // Base64 prefix remove karo
         $signature = preg_replace(
@@ -34,7 +36,7 @@ class SignatureController extends Controller
         Storage::disk('public')->put($fileName, $image);
 
 
-        $user = user::findOrFail($userId);
+        $user = user::findOrFail($driver->user_id);
         $user->update([
             'signature' => $fileName,
         ]);

@@ -157,6 +157,7 @@ class DriverController extends Controller
             'miscellaneous',
             'trafficconviction',
             'company',
+            'user'
         ])->find($id);
 
         $companyId = $driver->company_id;
@@ -165,10 +166,6 @@ class DriverController extends Controller
         $company = Company::where('user_id',$companyId)->first();
         if ($company) {
             $company->logo = $company->image? asset('storage/' . $company->image): null;
-        }
-
-        if($driverEmail){
-            Mail::to('salman94760@gmail.com')->send(DriverEsignRequest::class,[$drivers]);
         }
 
         if (!$driver) {

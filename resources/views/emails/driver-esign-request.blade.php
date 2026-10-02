@@ -14,7 +14,7 @@
             </h2>
 
             <p>
-                Hello {{ $driver->name ?? 'Driver' }},
+                Hello {{ $driver->fname }} {{ $driver->mname }} {{ $driver->lname }},
             </p>
 
             <p style="line-height:1.6;">
@@ -51,11 +51,11 @@
 
             </p>
 
-            <p style="line-height:1.6;">
+           <!--  <p style="line-height:1.6;">
                 For security purposes, this link is unique to you
                 and will expire after
                 <strong>6 hours</strong>.
-            </p>
+            </p> -->
 
             <p style="line-height:1.6;">
                 Please complete the E-Signature to continue processing
@@ -69,9 +69,9 @@
             <p style="line-height:1.6;">
                 Thank you,<br>
 
-                <strong>DOT COMPLIANCE SOLUTIONS LLC</strong><br>
+                <strong>{{$company->cname}}</strong><br>
 
-                conpany email
+                {{$company->email}}
             </p>
 
         </td>

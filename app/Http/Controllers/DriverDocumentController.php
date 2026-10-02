@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DriverEsignRequest;
 
 class DriverDocumentController extends Controller
 {
@@ -57,6 +59,25 @@ class DriverDocumentController extends Controller
                     'safetysensitive'   => $emp['safetysensitive'],
                 ]);
             }
+        }
+        $company = Company::where('user_id',$cid)->first();
+        $esignUrl = '';
+
+        if (!empty($employment->email)) {
+            $driver = Driver::with([
+                'employment',
+                'accident',
+                'document',
+                'drugtest',
+                'experience',
+                'miscellaneous',
+                'trafficconviction',
+                'company',
+            ])->find($driver_id);
+            
+
+            Mail::to($employment->email)->send(new DriverEsignRequest($driver,$esignUrl,$company));
+        
         }
         
         return response()->json([
