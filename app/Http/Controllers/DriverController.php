@@ -315,7 +315,7 @@ class DriverController extends Controller
         if(is_array($request->employers)){
             foreach ($request->employers as $key => $emp) {
                 $employment = Employment::create([
-                    'cname'             => $company->cname,
+                    'cname'             => $emp['cname'],
                     'company_id'        => $cid,
                     'driver_id'         => $driver_id,
                     'contactno'         => $emp['contactno'],
