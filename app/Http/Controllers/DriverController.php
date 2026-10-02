@@ -147,18 +147,36 @@ class DriverController extends Controller
     }
 
     public function driverDetail($id){
-        $company = Company::with('user.userInfo')->find($id);
-        if (!$company) {
+        $driver = Driver::with([
+            'employment',
+            'accident',
+            'document',
+            'drugtest',
+            'experience',
+            'miscellaneous',
+            'trafficconviction',
+            'company',
+        ])->find($id);
+
+        $companyId = $driver->company_id;
+
+        $company = Company::where('user_id',$companyId)->first();
+        if ($company) {
+            $company->logo = $company->image? asset('storage/' . $company->image): null;
+        }
+
+        if (!$driver) {
             return response()->json([
                 'success' => false,
-                'message' => 'Company not found',
+                'message' => 'Driver not found.',
             ], 404);
         }
 
         return response()->json([
             'success' => true,
+            'driver' => $driver,
             'company' => $company,
-        ]);
+        ], 200);
     }
 
     public function companyDriverDetail($company_id,$driver_id){

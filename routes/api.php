@@ -51,7 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Drivers
     Route::controller(DriverController::class)->group(function () {
         Route::get('/company/drivers/{id}','drivers');
-        Route::get('/company/driver/{id}', 'driverDetail');
+        Route::get('/company/driverDetail/{id}', 'driverDetail');
         Route::get('/company/driver/{companyId}/{driverId}', 'companyDriverDetail');
         Route::post('/company/driver/add', 'addDriver');
         Route::put('/company/driver/edit/{id}', 'updateDriver');
