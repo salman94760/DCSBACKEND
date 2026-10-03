@@ -21,6 +21,7 @@ use Illuminate\Support\Str;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Http;
 
 class DriverController extends Controller
 {
@@ -147,7 +148,7 @@ class DriverController extends Controller
         ], 200);
     }
 
-    public function driverDetail($id){
+    public function driverDetail(Request $request, $id){
         $driver = Driver::with([
             'employment',
             'accident',
@@ -168,6 +169,19 @@ class DriverController extends Controller
             $company->logo = $company->image? asset('storage/' . $company->image): null;
         }
 
+        $ip = $request->ip();
+        $location = Http::get("http://ip-api.com/json/{$ip}")->json();
+
+        $location = [
+            'ip' => $ip,
+            'country' => $location['country'] ?? null,
+            'state' => $location['regionName'] ?? null,
+            'city' => $location['city'] ?? null,
+            'zip' => $location['zip'] ?? null,
+            'latitude' => $location['lat'] ?? null,
+            'longitude' => $location['lon'] ?? null,
+        ];
+
         if (!$driver) {
             return response()->json([
                 'success' => false,
@@ -179,6 +193,7 @@ class DriverController extends Controller
             'success' => true,
             'driver' => $driver,
             'company' => $company,
+            'location' => $location,
         ], 200);
     }
 
