@@ -169,7 +169,7 @@ class DriverController extends Controller
             $company->logo = $company->image? asset('storage/' . $company->image): null;
         }
 
-        $ip = $request->ip();
+        $ip = Http::get('https://api4.ipify.org')->body();
         $location = Http::get("http://ip-api.com/json/{$ip}")->json();
 
         $location = [
