@@ -18,9 +18,6 @@ use Illuminate\Support\Facades\Gate;
 class CompanyController extends Controller
 {
     public function addCompany(Request $request){
-$request->validate([
-    'email' => 'required|email|unique:companies,email',
-]);
 
 
         $path = '';
