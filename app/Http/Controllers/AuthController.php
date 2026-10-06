@@ -131,7 +131,7 @@ public function addUser(Request $request)
     // Create user info
     if ($user) {
         $user->userInfo()->create([
-            'address' => $request->address,
+            'address' => $request->address??'',
             'phone' => $request->phone,
             'zipcode' => $request->zipcode,
             'landmark' => $request->landmark,
