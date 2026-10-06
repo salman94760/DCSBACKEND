@@ -156,8 +156,6 @@ public function addUser(Request $request)
     ], 200);
 }
 
-    
-
 public function users()
 {
     $users = User::with('userInfo')

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 use App\Models\userInfo;
+use App\Models\Permit;
 use Illuminate\Container\Attributes\Storage;
 
 use Illuminate\Support\Str;
@@ -79,9 +80,13 @@ $request->validate([
 
     public function company(Request $request){
         $type = $request->type?? '';
+        $section = $request->section?? '';
 
         if($type === 'permit'){
-         $companies = Company::with([
+            if($section === 'all'){
+                $companies = Permit::with('company')->get();
+            }else{
+                   $companies = Company::with([
     'user.userInfo',
     'permits'
 ])
@@ -98,7 +103,21 @@ $request->validate([
 ->get()
 ->unique('cname')
 ->values();
+            }
+
+
+
+
+
+
+
+
+
+
+
+    
         }else{
+            $companiesdetail = [];
             $companies = Company::with('user.userInfo')
     ->where(function ($query) {
         $query->where('comptype', '!=', 'permit')
