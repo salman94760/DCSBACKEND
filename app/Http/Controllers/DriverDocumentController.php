@@ -74,9 +74,12 @@ class DriverDocumentController extends Controller
                 'trafficconviction',
                 'company',
             ])->find($driver_id);
-            
 
-            Mail::to($employment->email)->send(new DriverEsignRequest($driver,$esignUrl,$company));
+            Driver::where('id', $driver_id)->update(['driverstatus' => 'active']);
+
+
+
+            // Mail::to($employment->email)->send(new DriverEsignRequest($driver,$esignUrl,$company));
         
         }
         
@@ -118,6 +121,7 @@ class DriverDocumentController extends Controller
                     'expiration_date'   =>  $request->docdate[$k] ?? null,
                     'file'              =>  $path
                 ]);
+                Driver::where('id', $driverId)->update(['driverstatus' => 'active']);
             }
         }
 
@@ -139,6 +143,7 @@ class DriverDocumentController extends Controller
                     'result'    => '',
                     'file'      => $path
                 ]);
+                Driver::where('id', $driverId)->update(['driverstatus' => 'active']);
             }
         }
 
@@ -157,6 +162,7 @@ class DriverDocumentController extends Controller
                     'date'     => $request->miscellaneousdate[$k] ?? null,
                     'file'      => $path
                 ]);
+                Driver::where('id', $driverId)->update(['driverstatus' => 'active']);
             }
         }
 
@@ -169,6 +175,7 @@ class DriverDocumentController extends Controller
 
     public function DriverDocument($id){
         $data = [];
+        $data['driver']         = Driver::where('id',$id)->get();
         $data['document']       = DriverDocument::where('driver_id',$id)->get();
         $data['drugtest']       = DriverDrugTest::where('driver_id',$id)->get();
         $data['miscellaneous']  = DriverMiscellaneous::where('driver_id',$id)->get();

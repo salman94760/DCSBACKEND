@@ -63,10 +63,11 @@ class Driver extends Model
         'oldcdlendorsements',        
         'oldcdlissuedate',           
         'oldcdlexpdate' ,
+        'esign',
         'esigndata',
         'ip_address',
         'timezone',
-        'us_time_date',            
+        'time_date',   
     ];
 
     public function employment()

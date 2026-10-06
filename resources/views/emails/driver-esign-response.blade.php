@@ -14,7 +14,7 @@
             </h2>
 
             <p>
-                Hello {{ $driver->name ?? 'Driver' }},
+               Hi {{$driver->fname}} {{$driver->mname}} {{$driver->lname}}
             </p>
 
             <p style="line-height:1.6;">

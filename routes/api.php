@@ -6,6 +6,7 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\DriverDocumentController;
 use App\Http\Controllers\DriverExperienceController;
 use App\Http\Controllers\SignatureController;
+use App\Http\Controllers\PermitController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,8 +16,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', [AuthController::class, 'login']);
-
-
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/company/driver-esign/add',[DriverController::class, 'AddDriverApplication']);
+Route::get('/company/driverDetail/{id}',[DriverController::class, 'driverDetail']);
 /*
 |--------------------------------------------------------------------------
 | Protected Routes
@@ -51,7 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Drivers
     Route::controller(DriverController::class)->group(function () {
         Route::get('/company/drivers/{id}','drivers');
-        Route::get('/company/driverDetail/{id}', 'driverDetail');
+        
         Route::get('/company/driver/{companyId}/{driverId}', 'companyDriverDetail');
         Route::post('/company/driver/add', 'addDriver');
         Route::put('/company/driver/edit/{id}', 'updateDriver');
@@ -72,5 +74,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(DriverExperienceController::class)->group(function () {
         Route::post('company/driver-experience/{id}', 'addDriverExperience');
         Route::get('company/driver-experience/{id}', 'DriverExperience');
+    });
+
+    // Company permits
+    Route::controller(PermitController::class)->group(function () {
+        Route::post('admin/permit/add', 'addCompanyPermit');
+        Route::get('admin/all-permit', 'CompanyPermit');
     });
 });

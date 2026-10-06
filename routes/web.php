@@ -8,9 +8,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('driver-application/{id}',[DriverController::class,'driverApplicationPreview']);
 
 Route::get('driver-application',function (){
-    return view('drivers.driver-application');
+    return view('emails.driver-esign-application');
 });
 
 Route::get('/driver-request',function (){
@@ -18,6 +19,7 @@ Route::get('/driver-request',function (){
 });
 
 Route::get('/driver-response',function (){
+
     return view('emails.driver-esign-response');
 });
 

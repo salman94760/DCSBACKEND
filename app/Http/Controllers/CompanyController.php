@@ -62,7 +62,12 @@ $request->validate([
             'aphone'            => $request->aphone??'',
             'physicaladdress'   => $request->physicaladdress??'',
             'mailaddress'       => $request->mailaddress??'',
-            'image'             => $path   
+            'image'             => $path,   
+            'comptype'          => $request->companytype??'',  
+            'operation'         => $request->operation??'',  
+            'trucks'            => $request->trucks??'',  
+            'hazmat'            => $request->hazmat??'',  
+            'specialty'         => $request->specialty??'',  
         ]);
 
         return response()->json([
@@ -72,8 +77,37 @@ $request->validate([
         ], 200);
     }
 
-    public function company(){
-        $companies = Company::with('user.userInfo')->get();
+    public function company(Request $request){
+        $type = $request->type?? '';
+
+        if($type === 'permit'){
+         $companies = Company::with([
+    'user.userInfo',
+    'permits'
+])
+->withCount([
+    'permits as open_permits_count' => function ($query) {
+        $query->where(function ($q) {
+            $q->where('status', '!=', 'Delivered')
+              ->orWhereNull('status');
+        });
+    }
+])
+->where('comptype', 'permit')
+->orderByDesc('id')
+->get()
+->unique('cname')
+->values();
+        }else{
+            $companies = Company::with('user.userInfo')
+    ->where(function ($query) {
+        $query->where('comptype', '!=', 'permit')
+              ->orWhereNull('comptype');
+    })
+    ->orderBy('id','desc')
+    ->get();    
+        }
+        
         return response()->json([
             'success' => true,
             'data' => $companies,

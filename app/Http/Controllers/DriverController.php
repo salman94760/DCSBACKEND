@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Spatie\Browsershot\Browsershot;
-
-use Spatie\LaravelPdf\Support\Pdf;
+use Barryvdh\DomPDF\Facade\Pdf; 
 use Illuminate\Container\Attributes\Storage;
 use App\Models\User;
 
@@ -22,42 +21,13 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
+use App\Mail\DriverEsignRequest;
+use App\Mail\DriverApplicationForm;
+use Illuminate\Support\Facades\File;
 
 class DriverController extends Controller
 {
-    public function genPdf(){
-        $html = view('drivers.driver-application', [
-        'name' => 'John Doe',
-        'amount' => 1500,
-    ])->render();
-
-    Browsershot::html($html)
-        ->format('A4')
-        ->savePdf(storage_path('app/invoice.pdf'));
-
-    return response()->download(
-        storage_path('app/invoice.pdf')
-    );
-    }
-
-    public function generatePdf(){
-        return Pdf('drivers.driver-application', [
-            'invoiceNumber' => '1234',
-            'customerName' => 'Grumpy Cat',
-        ]); 
-        $data = [
-            'name' => 'John Doe',
-            'amount' => 1500,
-        ];
-
-        $pdf = Pdf::loadView('drivers.driver-application', $data);
-  
-        $path = storage_path('app/invoice.pdf');
-  
-        $pdf->save($path);
-
-        return response()->download($path);
-    }
+    
 
     public function addDriver(Request $request){
         $fullname = $request->fname.' '.$request->lname;
@@ -197,30 +167,182 @@ class DriverController extends Controller
         ], 200);
     }
 
+    public function driverApplicationPreview(Request $request, $id){
+        $driver = Driver::with([
+            'employment',
+            'accident',
+            'document',
+            'drugtest',
+            'experience',
+            'miscellaneous',
+            'trafficconviction',
+            'company',
+            'user'
+        ])->find($id);
+
+        $companyId = $driver->company_id;
+        $driverEmail = $driver->email;
+
+        $company = Company::where('user_id',$companyId)->first();
+        if ($company) {
+            $company->logo = $company->image? asset('storage/' . $company->image): null;
+        }
+
+        $ip = Http::get('https://api4.ipify.org')->body();
+        $location = Http::get("http://ip-api.com/json/{$ip}")->json();
+
+        $doc = $driver->document->firstWhere('slug', 'pre-employment-clearing-house');
+        $cleHDate = !empty($doc?->expiration_date)? \Carbon\Carbon::parse($doc->expiration_date)->subYear()->format('Y-m-d'): '';
+
+        $signature = $driver->user?->signature ?? ''; 
+
+        if (!empty($signature)) { $signatureUrl = request()->getHost() === 'localhost' ? 'http://localhost:8000/storage/' . $signature : 'https://palegoldenrod-squid-977714.hostingersite.com/storage/app/public/' . $signature; }
+
+        return view('emails.driver-esign-application',compact('driver','company','location','cleHDate','signatureUrl'));
+
+       
+    }
+
     public function companyDriverDetail($company_id,$driver_id){
-    //      $driver = Driver::findOrFail($driver_id);
-
-    // if ((int) $driver->company_id !== (int) $user->company_id) {
-    //     return response()->json([
-    //         'message' => 'Unauthorized'
-    //     ], 403);
-    // }
-
-
-
-
-
-
         $driver = Driver::where(['id'=>$driver_id,'company_id'=>$company_id])->firstOrFail();
          return response()->json([
             'success' => true,
             'data' => $driver,
         ]);
+    }
+
+    public function AddDriverApplication(Request $request)
+    {
+        $path = '';
+
+        if($request->hasFile('photo')){
+            $path = $request->file('photo')->store('driver/'.$request->driver_id.'/profile','public');
+        }
+
+        $ip = Http::get('https://api4.ipify.org')->body();
+        $location = Http::get("http://ip-api.com/json/{$ip}")->json();
+        $driver = Driver::findOrFail($request->driver_id);
+        $driver->update([
+            'esign'      => 1,
+            'esigndata'  => $request->all(),
+            'ip_address' => $ip,
+            'timezone'   => $location,
+            'time_date'  => now()->format('Y-m-d H:i:s'),
+        ]);
+
+        $signature = $driver->user?->signature ?? '';
+        $signatureUrl = '';
+        $signatureBase64 = null;
+
+        if (!empty($signature)) {
+
+            $signatureUrl = request()->getHost() === 'localhost' ? 'http://localhost:8000/storage/' . $signature : 'https://palegoldenrod-squid-977714.hostingersite.com/storage/app/public/' . $signature;
+
+            $signaturePath = storage_path('app/public/' . $signature);
+            if (file_exists($signaturePath)) {
+                $mime = mime_content_type($signaturePath);
+                $signatureBase64 = 'data:' . $mime . ';base64,' .base64_encode(file_get_contents($signaturePath));
+            }
+        }
+
+        $userInfo = userInfo::where('user_id', $driver->user_id)->first();
+        if($driver->email){
+            $driver = Driver::with([
+                'employment',
+                'accident',
+                'document',
+                'drugtest',
+                'experience',
+                'miscellaneous',
+                'trafficconviction',
+                'company',
+                'user'
+            ])->find($request->driver_id);
+            
+            $companyId = $driver->company_id;
+            $driverEmail = $driver->email;
+
+            $company = Company::where('user_id',$companyId)->first();
+            if ($company) {
+                $company->logo = $company->image? asset('storage/' . $company->image): null;
+            }
+
+            $doc = $driver->document->firstWhere('slug', 'pre-employment-clearing-house');
+            $cleHDate = !empty($doc?->expiration_date)? \Carbon\Carbon::parse($doc->expiration_date)->subYear()->format('Y-m-d'): '';
+
+             if ($userInfo) {
+            $userInfo->update([
+                'image' => $path ?? null,
+            ]);
+        }
+  
+
+            $pdf = Pdf::loadView('emails.driver-esign-application', [
+                'driver'       => $driver,
+                'company'      => $company,
+                'location'     => $location,
+                'cleHDate'     => $cleHDate,
+                'signatureUrl' => $signatureBase64,
+            ]);
+
+   $pdf->setPaper('a4', 'portrait');
+
+
+
+            $licenseNo = preg_replace('/[^A-Za-z0-9_-]/','-',$driver->currentcdllicenseno ?? 'Unknown');
+          
+
+            $fileName = 'Driver-Application-' . $licenseNo . '.pdf'; 
+            $pdfPath = 'driver/' . $request->driver_id . '/application/' . $fileName; 
+
+            $fullPdfPath = storage_path('app/public/' . $pdfPath);
+            File::ensureDirectoryExists(dirname($fullPdfPath));
+
+            
+            $pdf->save($fullPdfPath);
 
 
 
 
- 
+        //     try {
+        //         // Mail::to('salman94760@gmail.com')->send(
+        //         //     new DriverApplicationForm(
+        //         //         $driver,
+        //         //         $company,
+        //         //         $location,
+        //         //         $cleHDate,
+        //         //         $signatureUrl,
+        //         //         $fullPdfPath
+        //         //     )
+        //         // );
+
+
+        //         return response()->json([
+        //             'success' => true,
+        //             'message' => 'Mail sent successfully',
+        //         ]);
+
+        //     } catch (\Throwable $e) {
+        //         \Log::error('Driver application mail failed', [
+        //             'error' => $e->getMessage(),
+        //             'file' => $e->getFile(),
+        //             'line' => $e->getLine(),
+        //         ]);
+
+        //         return response()->json([
+        //             'success' => false,
+        //             'message' => $e->getMessage(),
+        //         ], 500);
+        //     }
+        // }
+
+       
+
+            return response()->json([
+                'success' => true,
+                'msg' => 'E sign uploaded successfully',
+            ]);
+        }
     }
 
     public function updateDriver(Request $request, String $id){
