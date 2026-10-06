@@ -88,7 +88,7 @@ public function addUser(Request $request)
     $request->validate([
         'fname' => 'required|string|max:255',
         'lname' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email',
+        'email' => 'required|email',
         'company' => 'required|string|max:255',
 
         'phone' => [
