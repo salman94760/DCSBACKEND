@@ -30,7 +30,7 @@ class DriverController extends Controller
     
 
     public function addDriver(Request $request){
-        
+
         $fullname = $request->fname.' '.$request->lname;
         $randomPassword = Str::password(8,letters: true,numbers: false,symbols: false);
         $user = User::create([
@@ -420,17 +420,17 @@ class DriverController extends Controller
     }
 
     public function deleteDriver(String $id){
-        $company = Company::findOrFail($id);
-        $user_id = $company->user_id;
+        $driver = Driver::findOrFail($id);
+        $user_id = $driver->user_id;
         
         $user = User::findOrFail($user_id);
         $user->userInfo()->delete();
         $user->delete();
-        $company->delete();
+        $driver->delete();
         
         return response()->json([
             'success' => true,
-            'message' => 'Company deleted successfully.',
+            'message' => 'driver deleted successfully.',
         ], 200); 
     }
 }
