@@ -169,6 +169,7 @@ class DriverController extends Controller
     }
 
     public function driverApplicationPreview(Request $request, $id){
+        $signatureUrl = '';
         $driver = Driver::with([
             'employment',
             'accident',
@@ -196,10 +197,11 @@ class DriverController extends Controller
         $cleHDate = !empty($doc?->expiration_date)? \Carbon\Carbon::parse($doc->expiration_date)->subYear()->format('Y-m-d'): '';
 
         $signature = $driver->user?->signature ?? ''; 
+        $representative = 'Roneel Lal';
 
         if (!empty($signature)) { $signatureUrl = request()->getHost() === 'localhost' ? 'http://localhost:8000/storage/' . $signature : 'https://palegoldenrod-squid-977714.hostingersite.com/storage/app/public/' . $signature; }
 
-        return view('emails.driver-esign-application',compact('driver','company','location','cleHDate','signatureUrl'));
+        return view('emails.driver-esign-application',compact('driver','company','location','cleHDate','signatureUrl','representative'));
 
        
     }

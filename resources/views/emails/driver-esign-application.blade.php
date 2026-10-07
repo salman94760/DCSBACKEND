@@ -99,7 +99,7 @@
           MOTOR CARRIER / EMPLOYER
         </td>
         <td style="height:20px;border-bottom:1px solid #aebdcc;">
-          <span style="padding-left:12px;">{{$driver->esigndata['p1motorcarrieremployer']}}</span>
+          <span style="padding-left:12px;">{{$driver->esigndata['p1motorcarrieremployer']??''}}</span>
         </td>
       </tr>
 
@@ -651,7 +651,7 @@
               <input
                 type="text"
                 value="{{$driver->currentcdllicenseno}}"
-                style="box-sizing:border-box;width:95%;min-width:0;border:1px solid #000;padding:8px;font-size:14px;"
+                style="box-sizing:border-box;width:95%;min-width:0;border-bottom:1px solid #000;padding:8px;font-size:14px;"
               >
 
             </td>
@@ -665,7 +665,7 @@
               <input
                 type="text"
                 value="{{$driver->currentcdlstate}}"
-                style="box-sizing:border-box;width:95%;min-width:0;border:1px solid #000;padding:8px;font-size:14px;"
+                style="box-sizing:border-box;width:95%;min-width:0;border-bottom:1px solid #000;padding:8px;font-size:14px;"
               >
 
             </td>
@@ -681,11 +681,11 @@
 
             <td style="border:1px solid #555;padding:8px;">
 
-              <textarea
+              <div
                 name="p3currentaddress"
                 placeholder="Current Address"
-                style="box-sizing:border-box;width:95%;min-width:0;height:120px;resize:vertical;border:1px solid #555;padding:8px;font-size:14px;"
-              >{{$driver->currentstreet}}, {{$driver->currentcity}}, {{$driver->currentstate}}, {{$driver->currentzip}}</textarea>
+                style="box-sizing:border-box;width:95%;min-width:0;height:120px;resize:vertical;padding:8px;font-size:14px;"
+              ></div>
 
             </td>
           </tr>
@@ -702,21 +702,18 @@
 
         <img
         src="{{$signatureUrl}}"
-        style="height:40px;width:95%;object-fit:contain;border:1px solid #000;"
+        style="height:40px;width:95%;object-fit:contain;"
     >
             </td>
 
             <td style="border:1px solid #555;padding:8px;vertical-align:top;">
 
               <label style="display:block;margin-bottom:4px;font-size:12px;">
-                Date:
+                Date:    
               </label>
-
-              <input
-                type="date"
-                value="{{$cleHDate}}"
-                style="box-sizing:border-box;width:95%;min-width:0;border:1px solid #000;padding:8px;font-size:14px;"
-              >
+              <h2>
+            {{$cleHDate}}</h2>
+            
 
             </td>
           </tr>
@@ -726,14 +723,9 @@
             <td style="border:1px solid #555;padding:8px;vertical-align:top;">
 
               <label style="display:block;margin-bottom:4px;font-size:12px;">
-                Employer / Authorized Representative
+                Employer / Authorized Representative : {{$representative}}
               </label>
-
-              <input
-                type="text"
-                value="{{$company->owner}}"
-                style="box-sizing:border-box;width:95%;min-width:0;border:1px solid #000;padding:8px;font-size:14px;"
-              >
+        
 
             </td>
 
