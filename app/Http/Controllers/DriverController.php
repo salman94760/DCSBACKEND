@@ -30,6 +30,7 @@ class DriverController extends Controller
     
 
     public function addDriver(Request $request){
+        
         $fullname = $request->fname.' '.$request->lname;
         $randomPassword = Str::password(8,letters: true,numbers: false,symbols: false);
         $user = User::create([
