@@ -68,6 +68,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/company/driver/history/add', 'addDriverHistory');
         Route::post('/company/driver/document/add', 'addDriverDocument');
         Route::get('/company/driver-document/{id}', 'DriverDocument');
+        Route::delete('/company/delete-document/{id}', 'DelDriverDocument');
+
+       
     });
 
     // Drivers experience

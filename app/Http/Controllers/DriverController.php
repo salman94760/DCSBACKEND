@@ -194,7 +194,7 @@ class DriverController extends Controller
         $location = Http::get("http://ip-api.com/json/{$ip}")->json();
 
         $doc = $driver->document->firstWhere('slug', 'pre-employment-clearing-house');
-        $cleHDate = !empty($doc?->expiration_date)? \Carbon\Carbon::parse($doc->expiration_date)->subYear()->format('Y-m-d'): '';
+        $cleHDate = !empty($doc?->expiration_date)? \Carbon\Carbon::parse($doc->expiration_date)->subYear()->format('m-d-Y'): '';
 
         $signature = $driver->user?->signature ?? ''; 
         $representative = 'Roneel Lal';

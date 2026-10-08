@@ -723,9 +723,13 @@
             <td style="border:1px solid #555;padding:8px;vertical-align:top;">
 
               <label style="display:block;margin-bottom:4px;font-size:12px;">
-                Employer / Authorized Representative : {{$representative}}
+                Employer / Authorized Representative : 
               </label>
-        
+           <input
+                type="text"
+                value="{{$representative}}"
+                style="box-sizing:border-box;width:95%;min-width:0;border-bottom:1px solid #000;padding:8px;font-size:14px;"
+              >
 
             </td>
 
@@ -738,7 +742,7 @@
               <input
                 type="date"
                 value="{{$cleHDate}}"
-                style="box-sizing:border-box;width:95%;min-width:0;border:1px solid #000;padding:8px;font-size:14px;"
+                style="box-sizing:border-box;width:95%;min-width:0;padding:8px;font-size:14px;"
               >
 
             </td>
@@ -882,7 +886,7 @@
                             <textarea
                                 name="p3currentaddress"
                                 placeholder="Current Address"
-                                style="box-sizing:border-box;width:95%;min-width:0;height:120px;resize:vertical;border:1px solid #555;padding:8px;font-size:14px;"
+                                style="box-sizing:border-box;width:95%;min-width:0;height:120px;resize:vertical;padding:8px;font-size:14px;"
                             >{{ collect([
                                 $driver->currentstreet ?? null,
                                 $driver->currentcity ?? null,
@@ -956,7 +960,7 @@
 
                             <input
                                 type="text"
-                                value="{{ $company->owner ?? '' }}"
+                                value="{{ $representative }}"
                                 style="box-sizing:border-box;width:95%;height:20px;border:1px solid #000;padding:8px;"
                             >
                         </td>
@@ -1057,7 +1061,7 @@
 
         <td style="width:32%;border:1px solid #26364d;padding:0 10px 0 0;vertical-align:middle;">
            <span style=" padding-left:12px;">
-                                    {{ $company->owner ?? '' }}
+                                    {{ $representative ?? '' }}
                                 </span>
          
         </td>
@@ -1386,7 +1390,7 @@
 
         <td style="padding:0 10px 0 0;vertical-align:middle;">
             <span style="padding-left:12px;">
-            {{ $company->owner ?? '' }}
+            {{ $representative ?? '' }}
           </span>
 
            
@@ -1942,7 +1946,7 @@
         <td style="padding:0 10px 0 0;vertical-align:middle;">
        <span style="padding-left:12px;">
 
-                                  {{ $company->owner ?? '' }}
+                                  {{ $representative ?? '' }}
                                 </span>
 
            
@@ -1974,11 +1978,11 @@
         </td>
 
         <td style="padding:0 10px 0 0;vertical-align:middle;">
-     
-                                                   <img
+          {{$representative}}
+<!--                                                    <img
         src="{{$signaturerepUrl??''}}"
         style="height:40px;width:95%;object-fit:contain;"
-    >
+    > -->
 
            
          
@@ -2143,7 +2147,7 @@
 
         <div style="display:flex;align-items:center;min-height:20px;font-size:10.7px;">
             <span style="white-space:nowrap;">I, (Print Name):</span>
-            <span style="border-bottom:1px solid #000;padding-left:12px;">
+            <span style="width:70%;border-bottom:1px solid #000;padding-left:12px;">
                 {{ trim(($driver->fname ?? '') . ' ' . ($driver->mname ?? '') . ' ' . ($driver->lname ?? '')) }}
               </span>
          
@@ -2158,6 +2162,7 @@
             <span style="margin-left:7px;white-space:nowrap;">
                 Social Security Number
             </span>
+
         </div>
 
         <div style="display:flex;align-items:center;min-height:20px;margin-top:0;font-size:10.7px;">
@@ -2172,7 +2177,7 @@
             <span style="white-space:nowrap;">Hereby authorize:</span>
 
             <input
-                style="width:100%;margin-left:5px;height:15px;border:1px solid #26364d;outline:none;box-sizing:border-box;"
+                style="width:90%;margin-left:5px;height:15px;border:1px solid #26364d;outline:none;box-sizing:border-box;"
             >
         </div>
 
@@ -2309,20 +2314,10 @@
         <div style="display:flex;align-items:center;margin-top:0;font-size:10.7px;">
             <span style="white-space:nowrap;">Driver Signature:</span>
 
-            @if(!empty($signature))
-                <span style="border:1px solid #000;margin-left:5px;width:340px;">
-                    <img
-                        src="{{ $signature }}"
-                        alt="Signature"
-                        style="display:block;width:100%;height:40px;object-fit:contain;"
-                    >
-                </span>
-            @else
-                <input
-                    type="text"
-                    style="box-sizing:border-box;height:40px;width:340px;margin-left:5px;border:1px solid #000;padding:8px;font-size:12px;"
-                >
-            @endif
+                                                                            <img
+        src="{{$signatureUrl}}"
+        style="height:40px;width:10%;object-fit:contain;border:1px solid #000;"
+    >
         </div>
 
         <div style="display:flex;align-items:center;margin-top:0;font-size:10.7px;">

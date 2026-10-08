@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Spatie\Browsershot\Browsershot;
-
 use Spatie\LaravelPdf\Support\Pdf;
-use Illuminate\Container\Attributes\Storage;
-use App\Models\User;
 
+
+use Illuminate\Support\Facades\Storage; 
+
+use App\Models\User;
 use App\Models\userInfo;
 use App\Models\Driver;
 use App\Models\DriverDocument;
@@ -16,12 +17,14 @@ use App\Models\DriverDrugTest;
 use App\Models\DriverMiscellaneous;
 use App\Models\Employment;
 use App\Models\Company;
+
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DriverEsignRequest;
+use Illuminate\Support\Facades\File;
 
 class DriverDocumentController extends Controller
 {
@@ -107,7 +110,8 @@ class DriverDocumentController extends Controller
             $docfiles = $request->file('files');
             foreach ($docfiles as $k => $file) {
                 $filename = Str::slug($request->title[$k]) . '_' . $driverId . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $folder = str_replace(' ', '', $request->title[$k]);
+                $cleanTitle = preg_replace('/\s+/', '', $request->title[$k]);
+                $folder = $cleanTitle;
                 $slug = strtolower(str_replace(' ', '-', $request->title[$k]));
                 if ($file->isValid()) {
                     $path = $file->storeAs('driver/'.$driverId.'/document/'.$folder.'',$filename,'public');
@@ -184,6 +188,24 @@ class DriverDocumentController extends Controller
             'success'   => true,
             'message'   => 'Document fetched successfully.',
             'data'      => $data
+        ], 200);
+    }    
+
+    public function DelDriverDocument($id){
+        if($id){
+            $doc = DriverDocument::where('id',$id)->first();
+
+            if ($doc) {
+                if (Storage::disk('public')->exists($doc->file)) {
+                    Storage::disk('public')->delete($doc->file);
+                }
+                $doc->delete();
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'message'   => 'Document deleted successfully.',
         ], 200);
     }
 
