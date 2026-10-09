@@ -67,7 +67,8 @@ class Driver extends Model
         'esigndata',
         'ip_address',
         'timezone',
-        'time_date',   
+        'time_date',
+        'applicationpath'   
     ];
 
     public function employment()

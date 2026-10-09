@@ -217,7 +217,7 @@ class DriverController extends Controller
     public function AddDriverApplication(Request $request)
     {
         $path = '';
-
+        $representative = 'Roneel Lal';
         if($request->hasFile('photo')){
             $path = $request->file('photo')->store('driver/'.$request->driver_id.'/profile','public');
         }
@@ -286,6 +286,7 @@ class DriverController extends Controller
                 'location'     => $location,
                 'cleHDate'     => $cleHDate,
                 'signatureUrl' => $signatureBase64,
+                'representative' => $representative,
             ]);
 
    $pdf->setPaper('a4', 'portrait');
@@ -297,6 +298,12 @@ class DriverController extends Controller
 
             $fileName = 'Driver-Application-' . $licenseNo . '.pdf'; 
             $pdfPath = 'driver/' . $request->driver_id . '/application/' . $fileName; 
+
+            if($driver->email){
+                $driver->update([
+                    'applicationpath' => $pdfPath ?? null,
+                ]);   
+            }
 
             $fullPdfPath = storage_path('app/public/' . $pdfPath);
             File::ensureDirectoryExists(dirname($fullPdfPath));
