@@ -194,7 +194,8 @@ class DriverController extends Controller
         $location = Http::get("http://ip-api.com/json/{$ip}")->json();
 
         $doc = $driver->document->firstWhere('slug', 'pre-employment-clearing-house');
-        $cleHDate = !empty($doc?->expiration_date)? \Carbon\Carbon::parse($doc->expiration_date)->subYear()->format('m-d-Y'): '';
+        // $cleHDate = !empty($doc?->expiration_date)? \Carbon\Carbon::parse($doc->expiration_date)->format('m-d-Y'): '';
+         $cleHDate = date('m-d-Y',strtotime($doc->expiration_date));
 
         $signature = $driver->user?->signature ?? ''; 
         $representative = 'Roneel Lal';
@@ -321,7 +322,8 @@ if (!empty($photo)) {
             }
 
             $doc = $driver->document->firstWhere('slug', 'pre-employment-clearing-house');
-            $cleHDate = !empty($doc?->expiration_date)? \Carbon\Carbon::parse($doc->expiration_date)->subYear()->format('Y-m-d'): '';
+            // $cleHDate = !empty($doc?->expiration_date)? \Carbon\Carbon::parse($doc->expiration_date)->subYear()->format('Y-m-d'): '';
+            $cleHDate = date('m-d-Y',strtotime($doc->expiration_date));
 
              if ($userInfo) {
             $userInfo->update([

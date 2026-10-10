@@ -137,10 +137,10 @@
                                 APPLICATION DATE
                             </td>
                             <td style="height:25px;border-bottom:1px solid #aebdcc;">
-
-                                <span style="padding-left:12px;">{{ !empty($driver->esigndata['p1applicationdate'])
+                                 <p style="padding: 0px 10px;">{{ $cleHDate ?? '' }}</p>
+                         <!--        <span style="padding-left:12px;">{{ !empty($driver->esigndata['p1applicationdate'])
     ? \Carbon\Carbon::parse($driver->esigndata['p1applicationdate'])->format('m/d/Y')
-    : '' }}</span>
+    : '' }}</span> -->
                             </td>
                         </tr>
 
