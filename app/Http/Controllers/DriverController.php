@@ -201,7 +201,29 @@ class DriverController extends Controller
 
         if (!empty($signature)) { $signatureUrl = request()->getHost() === 'localhost' ? 'http://localhost:8000/storage/' . $signature : 'https://palegoldenrod-squid-977714.hostingersite.com/storage/app/public/' . $signature; }
 
-        return view('emails.driver-esign-application',compact('driver','company','location','cleHDate','signatureUrl','representative'));
+        $photo = $driver->user?->userInfo?->image ?? '';
+
+$photoUrl = '';
+$photoBase64 = null;
+
+if (!empty($photo)) {
+
+    $photoUrl = request()->getHost() === 'localhost'
+        ? 'http://localhost:8000/storage/' . $photo
+        : 'https://palegoldenrod-squid-977714.hostingersite.com/storage/app/public/' . $photo;
+
+    $photoPath = storage_path('app/public/' . $photo);
+
+    if (file_exists($photoPath)) {
+        $mime = mime_content_type($photoPath);
+
+        $photoBase64 = 'data:' . $mime . ';base64,' .
+            base64_encode(file_get_contents($photoPath));
+    }
+}
+
+           
+        return view('emails.driver-esign-application',compact('driver','company','location','cleHDate','signatureUrl','representative','ip','photo'));
 
        
     }
@@ -248,6 +270,34 @@ class DriverController extends Controller
             }
         }
 
+
+$photo = $driver->user?->userInfo?->image ?? '';
+
+$photoUrl = '';
+$photoBase64 = null;
+
+if (!empty($photo)) {
+
+    $photoUrl = request()->getHost() === 'localhost'
+        ? 'http://localhost:8000/storage/' . $photo
+        : 'https://palegoldenrod-squid-977714.hostingersite.com/storage/app/public/' . $photo;
+
+    $photoPath = storage_path('app/public/' . $photo);
+
+    if (file_exists($photoPath)) {
+        $mime = mime_content_type($photoPath);
+
+        $photoBase64 = 'data:' . $mime . ';base64,' .
+            base64_encode(file_get_contents($photoPath));
+    }
+}
+
+
+
+    
+
+
+
         $userInfo = userInfo::where('user_id', $driver->user_id)->first();
         if($driver->email){
             $driver = Driver::with([
@@ -278,7 +328,7 @@ class DriverController extends Controller
                 'image' => $path ?? null,
             ]);
         }
-  
+ 
 
             $pdf = Pdf::loadView('emails.driver-esign-application', [
                 'driver'       => $driver,
@@ -287,7 +337,10 @@ class DriverController extends Controller
                 'cleHDate'     => $cleHDate,
                 'signatureUrl' => $signatureBase64,
                 'representative' => $representative,
+                'ip' => $ip,
+                'photo' => $photoBase64,
             ]);
+
 
    $pdf->setPaper('a4', 'portrait');
 
