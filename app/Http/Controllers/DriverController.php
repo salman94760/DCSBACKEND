@@ -136,9 +136,15 @@ class DriverController extends Controller
         $driverEmail = $driver->email;
 
         $company = Company::where('user_id',$companyId)->first();
-        if ($company) {
-            $company->logo = $company->image? asset('storage/' . $company->image): null;
-        }
+       if ($company) {
+    $isLocal = in_array(request()->getHost(), ['localhost', '127.0.0.1']);
+
+    $company->logo = $company->image
+        ? ($isLocal
+            ? 'http://localhost:8000/storage/' . $company->image
+            : 'https://palegoldenrod-squid-977714.hostingersite.com/storage/app/public/' . $company->image)
+        : null;
+}
 
         $ip = Http::get('https://api4.ipify.org')->body();
         $location = Http::get("http://ip-api.com/json/{$ip}")->json();
